@@ -51,6 +51,7 @@ function listErrorCallback(name, address, status) {
         dataName : "errorType",
         dataValue : status
     }
+    var address = address === "" ? "<no address>" : address; 
     addItemToExistingList("#geocoding-errors", name + " - " + address + ": " + status, options);
 }
 
