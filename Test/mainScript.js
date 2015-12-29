@@ -1,7 +1,16 @@
 // Statics to fix
 var zoomLevel = 13;
-var mapCentreLat = 40.722283;
-var mapCentreLng = -73.98747;
+var mapCentreLat = 51.500152;
+var mapCentreLng = -0.126236;
+
+var googleMapsColours =
+    ["red", "blue", "orange", "green", "purple", "yellow", "pink"];
+
+var iconList =
+    jQuery.map(googleMapsColours, function(x) {
+        return "http://maps.google.com/mapfiles/ms/icons/" + x + "-dot.png";
+    })
+
 
 // Geocoding cache
 Storage.prototype.setObject = function(key, value) {
@@ -20,17 +29,32 @@ function stashCache() {
     localStorage.setObject("latLng", latLngCache);
 }
 
-function makeLatLngRequest(geocoder, address, resultCallback) {
+function makeLatLngRequest(geocoder, address, resultCallback, errorCallback, errorList) {
     geocoder.geocode( { "address" : address }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
             resultCallback(results);
         } else {
-            alert("Geocode unsuccessful: " + status);
+            errorCallback(address, status);
+            if(typeof(errorList) !== "undefined"){
+                errorList.push({"address" : address, "status" : status})
+            }
         }
     });
 };
 
-function latLngCached(cache, geocoder, address, resultCallback) {
+function basicErrorCallback(address, status) {
+    console.log("Geocode unsuccessful for: " + address + ". Status: " + status);
+}
+
+function listErrorCallback(name, address, status) {
+    var options = {
+        dataName : "errorType",
+        dataValue : status
+    }
+    addItemToExistingList("#geocoding-errors", name + " - " + address + ": " + status, options);
+}
+
+function latLngCached(cache, geocoder, address, resultCallback, errorCallback, errorList) {
     var res = cache[address];
     if (typeof(res) === 'undefined') {
         console.log("Fetching from Google: " + address);
@@ -38,11 +62,34 @@ function latLngCached(cache, geocoder, address, resultCallback) {
             cache[address] = result;
             stashCache();
             resultCallback(result);
-        });
+        }, errorCallback, errorList);
     } else {
         console.log("Fetching from cache: " + address);
         resultCallback(res);
     }
+}
+
+// Utilities
+
+function addItemToExistingList(listSelector, text, options) {
+    var dataName = options["dataName"];
+    var dataValue = options["dataValue"];
+    var onClickFunc = options["onClick"];
+    
+    var liElement = $("<li>").text(text);
+    
+    if(typeof(dataName) !== "undefined") {
+        var dataVal = typeof(dataValue) === "undefined" ? text : dataValue;
+        liElement = liElement.data(dataName, dataVal);
+    };
+
+    if (typeof (onClickFunc) !== "undefined") {
+        liElement.on("click", function (e) {
+            onClickFunc(text, data);
+        });
+    };
+
+    $(listSelector).append(liElement);
 }
 
 // Basic map options
@@ -72,6 +119,8 @@ function getData() {
         
     return data
 };
+
+//function getDataFrom
 
 function makeMarker(name, description, latLng, icon) {
     icon = (typeof icon === 'undefined') ? 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' : icon;
@@ -121,7 +170,51 @@ function drawMap(markers, mapOptions, holdingElementId) {
     
 }
 
+function getUniqueCategories(markerList, categoryName) {
+    categoryName = typeof(categoryName) === "undefined" ? "category" : "category";
+    arr = [];
+    jQuery.each(markerList, function(i, v) {
+        var lowerCat = v[categoryName].toLowerCase();
+        if(jQuery.inArray(lowerCat, arr)==-1) {
+            arr.push(lowerCat);
+        }
+    });
+    return arr;
+}
+
+function makeCategoryIconMap(uniqueCategories, iconList) {
+    iconMap = {};
+    jQuery.each(uniqueCategories, function(i, v) {
+        iconMap[v.toLowerCase()] = iconList[i];
+    });
+    
+    return iconMap;
+}
+    
+    
 google.maps.event.addDomListener(window, 'load', function() {
+    
+    document.getElementById("fileInput")
+        .addEventListener("change", function(e) {
+            handleFile(e, function(wb) {
+                $("#sheetNames").show();
+                handleExcelData(wb, function(name) {
+                    $("#sheetNames").hide();
+                    var data = readSheet(wb.Sheets[name]);
+                    drawMap([], mapOptions, mapDiv);
+                    
+                    var iconMap = makeCategoryIconMap(getUniqueCategories(data), iconList);
+                    
+                    jQuery.each(data, function(i, v) {
+                        latLngCached(latLngCache, geocoder, v.address, function(result) {
+                            var marker = makeMarker(v.name, v.description,
+                                result[0].geometry.location, iconMap[v.category.toLowerCase()]);
+                            addMarkerToMap(map, marker);
+                            }, function(a, s) { listErrorCallback(v.name, a, s)});
+                    });
+                });
+            });
+        }, false);
     
     mapOptions = {
         zoom: zoomLevel,
@@ -131,10 +224,10 @@ google.maps.event.addDomListener(window, 'load', function() {
     
     geocoder = new google.maps.Geocoder();    
 
-    drawMap(getData(), mapOptions, mapDiv);
-    
-    latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
-        addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
-    });
+    // drawMap(getData(), mapOptions, mapDiv);
+    // 
+    // latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
+    //     addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
+    // });
     
 });
