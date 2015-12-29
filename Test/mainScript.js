@@ -29,10 +29,16 @@ function stashCache() {
     localStorage.setObject("latLng", latLngCache);
 }
 
-function makeLatLngRequest(geocoder, address, resultCallback, errorCallback, errorList) {
+function makeLatLngRequest(geocoder, address, resultCallback, errorCallback, errorList, limitRetryTime) {
+    limitRetryTime = typeof(limitRetryTime) === "undefined" ? 2000 : limitRetryTime;
     geocoder.geocode( { "address" : address }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
             resultCallback(results);
+        } else if(status === "OVER_QUERY_LIMIT") {
+            console.log("Over query limit: " + address + ". Retrying in " + limitRetryTime);
+            setTimeout(function() {
+                makeLatLngRequest(geocoder, address, resultCallback, errorCallback, errorList, limitRetryTime*1.5)},
+                limitRetryTime);
         } else {
             errorCallback(address, status);
             if(typeof(errorList) !== "undefined"){
