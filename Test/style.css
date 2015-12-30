@@ -12,3 +12,7 @@ div#sheetNames li:hover {
 #geocoding-errors li {
     display: none;
 }
+
+#geocoding-requests li {
+    display: none;
+}
