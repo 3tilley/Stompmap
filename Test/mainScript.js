@@ -55,10 +55,22 @@ function basicErrorCallback(address, status) {
 function listErrorCallback(name, address, status) {
     var options = {
         dataName : "errorType",
-        dataValue : status
-    }
+        dataValue : status,
+        headerUpdateFunc : function () { headerUpdateFunc("#errorHeader") }
+    };
     var address = address === "" ? "<no address>" : address; 
     addItemToExistingList("#geocoding-errors", name + " - " + address + ": " + status, options);
+}
+
+function headerUpdateFunc(headerId) {
+        var h = $(headerId);
+        var newNum = h.data("errorcount") + 1;
+        h.data("errorcount", newNum);
+        h.text("Errors - " + newNum);
+        if(h.data("titlehidden")) {
+            h.show();
+            h.data("titlehidden", false);
+        }  
 }
 
 function latLngCached(cache, geocoder, address, resultCallback, errorCallback, errorList) {
@@ -82,6 +94,7 @@ function addItemToExistingList(listSelector, text, options) {
     var dataName = options["dataName"];
     var dataValue = options["dataValue"];
     var onClickFunc = options["onClick"];
+    var headerFunc = options["headerUpdateFunc"];
     
     var liElement = $("<li>").text(text);
     
@@ -95,6 +108,10 @@ function addItemToExistingList(listSelector, text, options) {
             onClickFunc(text, data);
         });
     };
+    
+    if (typeof(headerFunc) !== "undefined") {
+        headerFunc();
+    }
 
     $(listSelector).append(liElement);
 }
@@ -200,6 +217,10 @@ function makeCategoryIconMap(uniqueCategories, iconList) {
     
     
 google.maps.event.addDomListener(window, 'load', function() {
+    
+    $("#geocoding-errors").on("click", function(e) {
+        $("#geocoding-errors li").toggle();
+    });
     
     document.getElementById("fileInput")
         .addEventListener("change", function(e) {

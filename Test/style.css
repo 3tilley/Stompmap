@@ -8,3 +8,7 @@ div#sheetNames li:hover {
     font-weight: bold;
     cursor: pointer;
 }
+
+#geocoding-errors li {
+    display: none;
+}
