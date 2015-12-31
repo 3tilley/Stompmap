@@ -8,3 +8,10 @@ div#sheetNames li:hover {
     font-weight: bold;
     cursor: pointer;
 }
+
+div.markerResultJson {
+    display: none;
+    font-family: monospace;
+    white-space: pre;
+}
+

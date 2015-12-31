@@ -129,12 +129,15 @@ function getData() {
 
 //function getDataFrom
 
-function makeMarker(name, description, latLng, icon) {
+function makeMarker(name, description, latLng, category, address, geocoderResult, icon) {
     icon = (typeof icon === 'undefined') ? 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' : icon;
     var marker = {
         name: name,
         description: description,
         latLng: latLng,
+        category : category,
+        address : address,
+        geocoderResult : geocoderResult,
         icon: icon
     };
     return marker;
@@ -148,10 +151,15 @@ function addMarkerToMap(mapObj, markerData) {
         title: markerData.name,
         icon: markerData.icon
     });
+    
+    marker.isForceOpen = false;
   
     var displayString =
-        "<h1>" + markerData.name + "</h1>"
-        + "<p>" + markerData.description + "</p>"
+        '<h1>' + markerData.name + '</h1>'
+        + '<p>' + markerData.description + '</p>'
+        + '<div class="markerAddress">' + markerData.address + '</div>'
+        + '<div class="markerCategory">' + markerData.category + '</div>'
+        + '<div class="markerResultJson">' + JSON.stringify(markerData.geocoderResult, null, "\t") + '</div>'
          
     var window = new google.maps.InfoWindow({
         content: displayString
@@ -162,7 +170,20 @@ function addMarkerToMap(mapObj, markerData) {
     });
     
     google.maps.event.addListener(marker, 'mouseout', function () {
-        window.close();
+        if (marker.isForceOpen === false) {
+            window.close();
+        }
+    });
+    
+    // If the marker is clicked we want to hold it open
+    google.maps.event.addListener(marker, 'click', function () {
+        if (marker.isForceOpen) {
+            marker.isForceOpen = false;
+            window.close();
+        } else {
+            marker.isForceOpen = true;
+            window.open(map, marker);
+        }
     });
 }
 
@@ -215,7 +236,9 @@ google.maps.event.addDomListener(window, 'load', function() {
                     jQuery.each(data, function(i, v) {
                         latLngCached(latLngCache, geocoder, v.address, function(result) {
                             var marker = makeMarker(v.name, v.description,
-                                result[0].geometry.location, iconMap[v.category.toLowerCase()]);
+                                result[0].geometry.location, v.category,
+                                v.address, result,
+                                iconMap[v.category.toLowerCase()]);
                             addMarkerToMap(map, marker);
                             }, function(a, s) { listErrorCallback(v.name, a, s)});
                     });
