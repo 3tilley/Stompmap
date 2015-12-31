@@ -15,3 +15,10 @@ div.markerResultJson {
     white-space: pre;
 }
 
+#geocoding-errors li {
+    display: none;
+}
+
+#geocoding-requests li {
+    display: none;
+}

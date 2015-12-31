@@ -29,8 +29,11 @@ function stashCache() {
     localStorage.setObject("latLng", latLngCache);
 }
 
-function makeLatLngRequest(geocoder, address, resultCallback, errorCallback, errorList, limitRetryTime) {
+function makeLatLngRequest(geocoder, address, resultCallback, errorCallback, errorList, limitRetryTime, inProgressCallback) {
     limitRetryTime = typeof(limitRetryTime) === "undefined" ? 2000 : limitRetryTime;
+    if (typeof(inProgressCallback) !== "undefined") {
+        inProgressCallback(address);
+    }
     geocoder.geocode( { "address" : address }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
             resultCallback(results);
@@ -55,21 +58,37 @@ function basicErrorCallback(address, status) {
 function listErrorCallback(name, address, status) {
     var options = {
         dataName : "errorType",
-        dataValue : status
-    }
+        dataValue : status,
+        headerUpdateFunc : function () { headerUpdateFunc("#errorHeader", "errorcount", "Errors - ", 1) }
+        //itemId : name.replace(" ", "")
+    };
     var address = address === "" ? "<no address>" : address; 
     addItemToExistingList("#geocoding-errors", name + " - " + address + ": " + status, options);
 }
 
-function latLngCached(cache, geocoder, address, resultCallback, errorCallback, errorList) {
+function headerUpdateFunc(headerId, countDataId, headerText, incrementBy) {
+        var h = $(headerId);
+        var newNum = h.data(countDataId) + incrementBy;
+        h.data(countDataId, newNum);
+        h.text(headerText + newNum);
+        if(h.data("titlehidden")) {
+            h.show();
+            h.data("titlehidden", false);
+        }  
+}
+
+function latLngCached(cache, geocoder, address, resultCallback, errorCallback, errorList, inProgressCallback) {
     var res = cache[address];
+    if (typeof(inProgressCallback !== "undefined")) {
+        inProgressCallback(address);
+    }
     if (typeof(res) === 'undefined') {
         console.log("Fetching from Google: " + address);
         makeLatLngRequest(geocoder, address, function(result) {
             cache[address] = result;
             stashCache();
             resultCallback(result);
-        }, errorCallback, errorList);
+        }, errorCallback, errorList, 2000);
     } else {
         console.log("Fetching from cache: " + address);
         resultCallback(res);
@@ -82,6 +101,8 @@ function addItemToExistingList(listSelector, text, options) {
     var dataName = options["dataName"];
     var dataValue = options["dataValue"];
     var onClickFunc = options["onClick"];
+    var headerFunc = options["headerUpdateFunc"];
+    var itemId = options["itemId"];
     
     var liElement = $("<li>").text(text);
     
@@ -95,8 +116,21 @@ function addItemToExistingList(listSelector, text, options) {
             onClickFunc(text, data);
         });
     };
+    
+    if (typeof(headerFunc) !== "undefined") {
+        headerFunc();
+    }
+    
+    if (typeof(itemId) !== "undefined") {
+        liElement = liElement.attr("id", itemId);
+    }
 
     $(listSelector).append(liElement);
+}
+
+function removeItemFromList(listSelector, itemId) {
+    var itemId = itemId.toString()[0] == "#" ? itemId : "#" + itemId; 
+    $(listSelector + " " + itemId).remove();
 }
 
 // Basic map options
@@ -222,6 +256,14 @@ function makeCategoryIconMap(uniqueCategories, iconList) {
     
 google.maps.event.addDomListener(window, 'load', function() {
     
+    $("#geocoding-errors").on("click", function(e) {
+        $("#geocoding-errors li").toggle();
+    });
+    
+    $("#geocoding-requests").on("click", function(e) {
+        $("#geocoding-requests li").toggle();
+    });
+    
     document.getElementById("fileInput")
         .addEventListener("change", function(e) {
             handleFile(e, function(wb) {
@@ -234,13 +276,26 @@ google.maps.event.addDomListener(window, 'load', function() {
                     var iconMap = makeCategoryIconMap(getUniqueCategories(data), iconList);
                     
                     jQuery.each(data, function(i, v) {
+                        var itemId = "request-" + i;
                         latLngCached(latLngCache, geocoder, v.address, function(result) {
+                            removeItemFromList("#geocoding-requests", itemId);
+                            headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
                             var marker = makeMarker(v.name, v.description,
                                 result[0].geometry.location, v.category,
                                 v.address, result,
                                 iconMap[v.category.toLowerCase()]);
                             addMarkerToMap(map, marker);
-                            }, function(a, s) { listErrorCallback(v.name, a, s)});
+                            }, function(a, s) {
+                                    removeItemFromList("#geocoding-requests", itemId);
+                                    headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
+                                    listErrorCallback(v.name, a, s)}, [],
+                            function(address) {
+                                var options = { itemId : itemId }
+                                var address = address === "" ? "<no address>" : address; 
+                                var text = v.name + " - " + address; 
+                                addItemToExistingList("#geocoding-requests", text, options);
+                                headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", 1);
+                            }) ;
                     });
                 });
             });
