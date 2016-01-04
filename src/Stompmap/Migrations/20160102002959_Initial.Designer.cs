@@ -8,9 +8,10 @@ using Stompmap.Models;
 namespace Stompmap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160102002959_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -164,34 +165,6 @@ namespace Stompmap.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Stompmap.Models.Marker", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Address");
-
-                    b.Property<string>("Category");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("GeocoderResult");
-
-                    b.Property<string>("Icon");
-
-                    b.Property<int>("IdOnMap");
-
-                    b.Property<double>("Latitude");
-
-                    b.Property<double>("Longtitude");
-
-                    b.Property<int>("MapId");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNet.Identity.EntityFramework.IdentityRole")
@@ -222,13 +195,6 @@ namespace Stompmap.Migrations
                     b.HasOne("Stompmap.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Stompmap.Models.Marker", b =>
-                {
-                    b.HasOne("Stompmap.Models.Map")
-                        .WithMany()
-                        .HasForeignKey("MapId");
                 });
         }
     }

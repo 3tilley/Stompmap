@@ -1,0 +1,25 @@
+@model Stompmap.Models.Map
+
+@{
+    ViewData["Title"] = "See";
+}
+
+<h2>@Html.DisplayFor(model => model.Name)</h2>
+
+<div id="map-canvas"></div>
+
+@section Scripts {
+    <script>
+        var embeddedMapData = {
+            zoomLevel : @Model.ZoomLevel,
+            mapCentreLat : @Model.CentreLatitude,
+            mapCentreLng : @Model.CentreLongtitude
+            };
+    </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script src="~/lib/js-xlsx/xlsx.js"></script>
+    <script src="~/js/loadingSpreadsheet.js"></script>
+    <script src="~/js/mainScript.js"></script>
+}

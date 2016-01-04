@@ -1,0 +1,48 @@
+@model Stompmap.Models.Map
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Map</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CentreLatitude)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CentreLatitude)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CentreLongtitude)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CentreLongtitude)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ZoomLevel)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ZoomLevel)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>

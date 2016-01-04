@@ -8,9 +8,10 @@ using Stompmap.Models;
 namespace Stompmap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160102031943_Initial3")]
+    partial class Initial3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -179,13 +180,11 @@ namespace Stompmap.Migrations
 
                     b.Property<string>("Icon");
 
-                    b.Property<int>("IdOnMap");
-
                     b.Property<double>("Latitude");
 
                     b.Property<double>("Longtitude");
 
-                    b.Property<int>("MapId");
+                    b.Property<int?>("MapId");
 
                     b.Property<string>("Name");
 

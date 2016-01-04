@@ -256,50 +256,50 @@ function makeCategoryIconMap(uniqueCategories, iconList) {
     
 google.maps.event.addDomListener(window, 'load', function() {
     
-    $("#geocoding-errors").on("click", function(e) {
-        $("#geocoding-errors li").toggle();
-    });
+    //$("#geocoding-errors").on("click", function(e) {
+    //    $("#geocoding-errors li").toggle();
+    //});
     
-    $("#geocoding-requests").on("click", function(e) {
-        $("#geocoding-requests li").toggle();
-    });
+    //$("#geocoding-requests").on("click", function(e) {
+    //    $("#geocoding-requests li").toggle();
+    //});
     
-    document.getElementById("fileInput")
-        .addEventListener("change", function(e) {
-            handleFile(e, function(wb) {
-                $("#sheetNames").show();
-                handleExcelData(wb, function(name) {
-                    $("#sheetNames").hide();
-                    var data = readSheet(wb.Sheets[name]);
-                    drawMap([], mapOptions, mapDiv);
+    //document.getElementById("fileInput")
+    //    .addEventListener("change", function(e) {
+    //        handleFile(e, function(wb) {
+    //            $("#sheetNames").show();
+    //            handleExcelData(wb, function(name) {
+    //                $("#sheetNames").hide();
+    //                var data = readSheet(wb.Sheets[name]);
+    //                drawMap([], mapOptions, mapDiv);
                     
-                    var iconMap = makeCategoryIconMap(getUniqueCategories(data), iconList);
+    //                var iconMap = makeCategoryIconMap(getUniqueCategories(data), iconList);
                     
-                    jQuery.each(data, function(i, v) {
-                        var itemId = "request-" + i;
-                        latLngCached(latLngCache, geocoder, v.address, function(result) {
-                            removeItemFromList("#geocoding-requests", itemId);
-                            headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
-                            var marker = makeMarker(v.name, v.description,
-                                result[0].geometry.location, v.category,
-                                v.address, result,
-                                iconMap[v.category.toLowerCase()]);
-                            addMarkerToMap(map, marker);
-                            }, function(a, s) {
-                                    removeItemFromList("#geocoding-requests", itemId);
-                                    headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
-                                    listErrorCallback(v.name, a, s)}, [],
-                            function(address) {
-                                var options = { itemId : itemId }
-                                var address = address === "" ? "<no address>" : address; 
-                                var text = v.name + " - " + address; 
-                                addItemToExistingList("#geocoding-requests", text, options);
-                                headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", 1);
-                            }) ;
-                    });
-                });
-            });
-        }, false);
+    //                jQuery.each(data, function(i, v) {
+    //                    var itemId = "request-" + i;
+    //                    latLngCached(latLngCache, geocoder, v.address, function(result) {
+    //                        removeItemFromList("#geocoding-requests", itemId);
+    //                        headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
+    //                        var marker = makeMarker(v.name, v.description,
+    //                            result[0].geometry.location, v.category,
+    //                            v.address, result,
+    //                            iconMap[v.category.toLowerCase()]);
+    //                        addMarkerToMap(map, marker);
+    //                        }, function(a, s) {
+    //                                removeItemFromList("#geocoding-requests", itemId);
+    //                                headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
+    //                                listErrorCallback(v.name, a, s)}, [],
+    //                        function(address) {
+    //                            var options = { itemId : itemId }
+    //                            var address = address === "" ? "<no address>" : address; 
+    //                            var text = v.name + " - " + address; 
+    //                            addItemToExistingList("#geocoding-requests", text, options);
+    //                            headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", 1);
+    //                        }) ;
+    //                });
+    //            });
+    //        });
+    //    }, false);
     
     if (typeof(embeddedMapData) === "undefined") {
         mapOptions = {
@@ -318,10 +318,10 @@ google.maps.event.addDomListener(window, 'load', function() {
     
     geocoder = new google.maps.Geocoder();    
 
-    // drawMap(getData(), mapOptions, mapDiv);
-    // 
-    // latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
-    //     addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
-    // });
+     drawMap(getData(), mapOptions, mapDiv);
+     
+     //latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
+     //    addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
+     //});
     
 });
