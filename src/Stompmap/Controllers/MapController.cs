@@ -30,7 +30,10 @@ namespace Stompmap.Controllers
                 return HttpNotFound();
             }
 
-            Map map = await _context.Map.SingleAsync(m => m.Id == id);
+            Map map = await _context
+                .Map
+                .Include(m => m.Markers)
+                .SingleAsync(m => m.Id == id) ;
             if (map == null)
             {
                 return HttpNotFound();

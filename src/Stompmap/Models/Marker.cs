@@ -40,5 +40,16 @@ namespace Stompmap.Models
 
         public Map Map { get; set; }
 
+        public bool AddIdOnMap()
+        {
+            if(IdOnMap == 0) {
+                var count = Map.Markers.Count;
+                IdOnMap = count + 1;
+                return true;
+            }
+            return false;
+        }
     }
+
+
 }

@@ -16,29 +16,40 @@
         <dd>
             @Html.DisplayFor(model => model.CentreLatitude)
         </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.CentreLongtitude)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.CentreLongtitude)
         </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.Location)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Location)
         </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.ZoomLevel)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.ZoomLevel)
+        </dd>
+        
+        <dt>
+            Markers
+        </dt>
+        <dd>
+            <a asp-route="MarkerOnMap" asp-route-action="Index" asp-route-mapId="@Model.Id">@Model.Markers.Count</a>
         </dd>
     </dl>
 </div>

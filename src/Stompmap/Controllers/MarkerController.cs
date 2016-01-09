@@ -4,9 +4,11 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Stompmap.Models;
+using Stompmap.Filters;
 
 namespace Stompmap.Controllers
 {
+    [AppendUseMapIdActionFilter(false)]
     public class MarkerController : Controller
     {
         private ApplicationDbContext _context;
@@ -54,6 +56,7 @@ namespace Stompmap.Controllers
         {
             if (ModelState.IsValid)
             {
+                marker.AddIdOnMap();
                 _context.Marker.Add(marker);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -75,7 +78,7 @@ namespace Stompmap.Controllers
             {
                 return HttpNotFound();
             }
-            ViewData["MapId"] = new SelectList(_context.Map, "Id", "Map", marker.MapId);
+            ViewData["MapId"] = new SelectList(_context.Map, "Id", "Name", marker.MapId);
             return View(marker);
         }
 
@@ -90,7 +93,7 @@ namespace Stompmap.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["MapId"] = new SelectList(_context.Map, "Id", "Map", marker.MapId);
+            ViewData["MapId"] = new SelectList(_context.Map, "Id", "Name", marker.MapId);
             return View(marker);
         }
 

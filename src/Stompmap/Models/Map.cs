@@ -24,6 +24,6 @@ namespace Stompmap.Models
         [Range(0, 15, ErrorMessage = "The {0} must be between {1} and {2}")]
         public int ZoomLevel { get; set; }
 
-        public virtual ICollection<Marker> Markers { get; set; }
+        public ICollection<Marker> Markers { get; set; }
     }
 }

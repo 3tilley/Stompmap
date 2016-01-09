@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Details";
+    var idToUse = (bool)ViewData["UseIdOnMap"] ? Model.IdOnMap : Model.Id;
+    var routeAttribute = (bool)ViewData["UseIdOnMap"] ? "idOnMap" : "id";
+    var routeData = new Dictionary<string, string>()
+    {
+        { routeAttribute, idToUse.ToString() }
+    };
 }
 
 <h2>Details</h2>
@@ -67,6 +73,6 @@
     </dl>
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Edit" asp-all-route-data="@routeData" >Edit</a> |
     <a asp-action="Index">Back to List</a>
 </p>
