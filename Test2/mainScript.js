@@ -324,7 +324,7 @@ google.maps.event.addDomListener(window, 'load', function() {
     geocoder = new google.maps.Geocoder();    
 
     var jsonFile = jQuery.getJSON("test.json", function(data) {
-        jQuery.each(data, function(m) {
+        jQuery.each(data, function(i, m) {
             addMarkerToMap(map, m);
         })
     });
