@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-
+using Newtonsoft.Json;
 namespace Stompmap.Models
 {
 
@@ -38,6 +38,7 @@ namespace Stompmap.Models
 
         public int MapId { get; set; }
 
+        [JsonIgnore]
         public Map Map { get; set; }
 
         public bool AddIdOnMap()

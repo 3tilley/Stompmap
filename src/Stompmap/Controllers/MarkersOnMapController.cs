@@ -13,6 +13,11 @@ namespace Stompmap.Controllers
     {
         private ApplicationDbContext _context;
         
+        private bool IsRequestJson()
+        {
+            return Request.Headers["Accept"].Contains("application/json");
+        }
+
         public MarkersOnMapController(ApplicationDbContext context)
         {
             _context = context;
@@ -23,13 +28,12 @@ namespace Stompmap.Controllers
         {
             var applicationDbContext = _context.Marker.Include(m => m.Map);
             var ms = applicationDbContext.Where(m => m.MapId == mapId);
-            var isJson = Request.Headers["Accept"].Contains("application/json");
 
             var fullList = await ms.ToListAsync();
 
-            if (isJson) {
-                return Json(new { data = fullList });
-                //return Ok(fullList);
+            if (IsRequestJson()) {
+                var jsonReturn = new ObjectResult( fullList );
+                return jsonReturn;
             } else {
                 return View("../" + nameof(Marker) + "/Index", fullList);
             }
@@ -49,7 +53,13 @@ namespace Stompmap.Controllers
                 return HttpNotFound();
             }
 
-            return View("../" + nameof(Marker) + "/" + nameof(Details), marker);
+            if (IsRequestJson())
+            {
+                return new ObjectResult(marker);
+            } else
+            {
+                return View("../" + nameof(Marker) + "/" + nameof(Details), marker);
+            }
         }
 
         // GET: Map/5/Stomps/Create

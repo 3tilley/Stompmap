@@ -55,7 +55,10 @@ namespace Stompmap
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(
+                options =>
+                    options.SerializerSettings.ContractResolver =
+                        new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver());
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

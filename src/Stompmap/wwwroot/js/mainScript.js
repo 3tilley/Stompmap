@@ -318,7 +318,9 @@ google.maps.event.addDomListener(window, 'load', function() {
     
     geocoder = new google.maps.Geocoder();    
 
-     drawMap(getData(), mapOptions, mapDiv);
+    var jsonFile = jQuery.getJSON(stompsUrl, function (data) {
+        drawMap(data, mapOptions, mapDiv);
+    });
      
      //latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
      //    addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
