@@ -5,6 +5,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Stompmap.Models;
 using Stompmap.Filters;
+using System;
 
 namespace Stompmap.Controllers
 {
@@ -15,7 +16,9 @@ namespace Stompmap.Controllers
         
         private bool IsRequestJson()
         {
-            return Request.Headers["Accept"].Contains("application/json");
+            var accHeader = Request.Headers["Accept"];
+            var concatString = String.Concat(accHeader);
+            return concatString.Contains("application/json");
         }
 
         public MarkersOnMapController(ApplicationDbContext context)
@@ -71,7 +74,7 @@ namespace Stompmap.Controllers
 
         // POST: Map/5/Stomps/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int mapId, Marker marker)
         {
             if (ModelState.IsValid)

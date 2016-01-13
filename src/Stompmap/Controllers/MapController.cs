@@ -121,7 +121,7 @@ namespace Stompmap.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Map/See/5
+        // GET: Map/5
         public async Task<IActionResult> See(int? id)
         {
             if (id == null)

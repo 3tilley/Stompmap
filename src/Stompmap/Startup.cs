@@ -108,6 +108,12 @@ namespace Stompmap
                     name: "MarkerOnMap",
                     template: "Map/{mapId}/Stomps/{action=Index}/{idOnMap?}",
                     defaults: new { controller = "MarkersOnMap" });
+
+                routes.MapRoute(
+                    name: "SeeMap",
+                    template: "Map/{id}",
+                    defaults: new { controller = "Map", action = "See" });
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

@@ -180,10 +180,10 @@ function makeMarker(name, description, latLng, category, address, geocoderResult
 function addMarkerToMap(mapObj, markerData) {
   
     var marker = new google.maps.Marker({
-        position: markerData.latLng,
+        position: new google.maps.LatLng(markerData.latitude, markerData.longtitude),
         map: mapObj,
         title: markerData.name,
-        icon: markerData.icon
+        icon: markerData.icon || iconList[0]
     });
     
     marker.isForceOpen = false;
@@ -318,8 +318,19 @@ google.maps.event.addDomListener(window, 'load', function() {
     
     geocoder = new google.maps.Geocoder();    
 
-    var jsonFile = jQuery.getJSON(stompsUrl, function (data) {
-        drawMap(data, mapOptions, mapDiv);
+    //var jsonFile = jQuery.get(stompsUrl, function (data) {
+    //    drawMap(data, mapOptions, mapDiv);
+    //}, "json");
+
+    $.ajax({
+        dataType: "json",
+        accepts: {
+            text: "application/json"
+        },
+        url: stompsUrl,
+        success: function (data) {
+            drawMap(data, mapOptions, mapDiv);
+            }
     });
      
      //latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {

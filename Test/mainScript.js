@@ -284,6 +284,7 @@ google.maps.event.addDomListener(window, 'load', function() {
                                 result[0].geometry.location, v.category,
                                 v.address, result,
                                 iconMap[v.category.toLowerCase()]);
+                            jQuery.post("http://localhost:49828/Map/1/Stomps/Create", marker)
                             addMarkerToMap(map, marker);
                             }, function(a, s) {
                                     removeItemFromList("#geocoding-requests", itemId);
