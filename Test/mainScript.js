@@ -163,12 +163,13 @@ function getData() {
 
 //function getDataFrom
 
-function makeMarker(name, description, latLng, category, address, geocoderResult, icon) {
+function makeMarker(name, description, lat, lng, category, address, geocoderResult, icon) {
     icon = (typeof icon === 'undefined') ? 'http://maps.google.com/mapfiles/ms/icons/red-dot.png' : icon;
     var marker = {
         name: name,
         description: description,
-        latLng: latLng,
+        latitude: lat,
+        longtitude: lng,
         category : category,
         address : address,
         geocoderResult : geocoderResult,
@@ -180,7 +181,7 @@ function makeMarker(name, description, latLng, category, address, geocoderResult
 function addMarkerToMap(mapObj, markerData) {
   
     var marker = new google.maps.Marker({
-        position: markerData.latLng,
+        position: new google.maps.LatLng(markerData.latitude, markerData.longtitude),
         map: mapObj,
         title: markerData.name,
         icon: markerData.icon
@@ -281,7 +282,7 @@ google.maps.event.addDomListener(window, 'load', function() {
                             removeItemFromList("#geocoding-requests", itemId);
                             headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
                             var marker = makeMarker(v.name, v.description,
-                                result[0].geometry.location, v.category,
+                                result[0].geometry.location.lat, result[0].geometry.location.lng, v.category,
                                 v.address, result,
                                 iconMap[v.category.toLowerCase()]);
                             jQuery.post("http://localhost:49828/Map/1/Stomps/Create", marker)
