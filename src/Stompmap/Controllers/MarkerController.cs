@@ -56,7 +56,7 @@ namespace Stompmap.Controllers
         {
             if (ModelState.IsValid)
             {
-                marker.AddIdOnMap();
+                //marker.AddIdOnMap();
                 _context.Marker.Add(marker);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");

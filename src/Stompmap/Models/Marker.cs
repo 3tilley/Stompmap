@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 namespace Stompmap.Models
 {
 
@@ -32,16 +34,18 @@ namespace Stompmap.Models
 
         public string Address { get; set; }
 
-        public string GeocoderResult { get; set; }
+        public JRaw GeocoderResult { get; set; }
 
         public string Icon { get; set; }
 
         public int MapId { get; set; }
 
+        public bool IsPartialResult { get; set; }
+
         [JsonIgnore]
         public Map Map { get; set; }
 
-        public bool AddIdOnMap()
+        private bool AddIdOnMap()
         {
             if(IdOnMap == 0) {
                 var count = Map.Markers.Count;

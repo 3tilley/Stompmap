@@ -6,6 +6,7 @@ using Microsoft.Data.Entity;
 using Stompmap.Models;
 using Stompmap.Filters;
 using System;
+using System.Collections.Generic;
 
 namespace Stompmap.Controllers
 {
@@ -13,7 +14,44 @@ namespace Stompmap.Controllers
     public class MarkersOnMapController : Controller
     {
         private ApplicationDbContext _context;
-        
+
+        private System.Collections.Concurrent.ConcurrentDictionary<int, int> _markerCountPerMap;
+
+        private async Task<int> GetMarkerCountForMap(int mapId)
+        {
+            // A value of -1 indicates that the data is being populated
+            var keyDoesntExist = _markerCountPerMap.TryAdd(mapId, -1);
+            if (keyDoesntExist)
+            {
+                // Get the count of the markers from the map
+                var map = await _context.Map
+                    .Include(m => m.Markers)
+                    .SingleAsync(m => m.Id == mapId);
+
+                var mc = map.Markers.Count();
+
+                _markerCountPerMap.TryAdd(mapId, mc);
+
+                return mc;
+            } else
+            {
+                // Get the value of the key and knock it up one if it wasn't a zero
+                var keyValue = _markerCountPerMap.AddOrUpdate(mapId, -1, (key, oldValue) =>
+                    oldValue == -1 ? -1 : oldValue + 1);
+
+                if (keyValue != -1)
+                {
+                    // Just return the count in the dictionary
+                    return keyValue;
+                } else
+                {
+                    await Task.Delay(100);
+
+                    return await GetMarkerCountForMap(mapId);
+                }
+            }
+        }
+
         private bool IsRequestJson()
         {
             var accHeader = Request.Headers["Accept"];
@@ -87,7 +125,7 @@ namespace Stompmap.Controllers
                     .SingleAsync(m => m.Id == mapId);
 
                 marker.Map = map;
-                marker.AddIdOnMap();
+                marker.IdOnMap = await GetMarkerCountForMap(mapId);
                 
                 _context.Marker.Add(marker);
                 await _context.SaveChangesAsync();
