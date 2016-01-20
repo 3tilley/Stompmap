@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Stompmap.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Stompmap.Models
 {
@@ -12,6 +13,15 @@ namespace Stompmap.Models
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder
+                .Entity<RawJson>()
+                .Property(e => e.Serialised)
+                .HasColumnName("GeocoderResult");
+
+            builder.Entity<RawJson>().
+                Ignore(e => e.jRaw);
+
+
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.

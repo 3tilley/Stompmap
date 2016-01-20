@@ -34,26 +34,19 @@ namespace Stompmap.Models
 
         public string Address { get; set; }
 
-        public JRaw GeocoderResult { get; set; }
+        public virtual RawJson GeocoderResult { get; set; }
 
         public string Icon { get; set; }
 
         public int MapId { get; set; }
+
+        public bool hasBeenVisited { get; set; }
 
         public bool IsPartialResult { get; set; }
 
         [JsonIgnore]
         public Map Map { get; set; }
 
-        private bool AddIdOnMap()
-        {
-            if(IdOnMap == 0) {
-                var count = Map.Markers.Count;
-                IdOnMap = count + 1;
-                return true;
-            }
-            return false;
-        }
     }
 
 
