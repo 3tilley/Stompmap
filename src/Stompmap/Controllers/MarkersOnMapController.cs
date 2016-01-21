@@ -15,7 +15,7 @@ namespace Stompmap.Controllers
     {
         private ApplicationDbContext _context;
 
-        private System.Collections.Concurrent.ConcurrentDictionary<int, int> _markerCountPerMap;
+        private System.Collections.Concurrent.ConcurrentDictionary<int, int> _markerCountPerMap = new System.Collections.Concurrent.ConcurrentDictionary<int, int>();
 
         private async Task<int> GetMarkerCountForMap(int mapId)
         {

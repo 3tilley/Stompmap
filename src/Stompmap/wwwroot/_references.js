@@ -8,3 +8,7 @@
 /// <reference path="lib/jquery-validation/dist/jquery.validate.js" />
 /// <reference path="lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js" />
 /// <reference path="lib/js-xlsx/dist/xlsx.js" />
+/// <reference path="test/loadingspreadsheet.js" />
+/// <reference path="test/mainscript.js" />
+/// <reference path="test/resources/jquery.min.js" />
+/// <reference path="test/resources/xlsx.core.min.js" />

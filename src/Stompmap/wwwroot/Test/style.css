@@ -1,0 +1,37 @@
+html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+      
+#map-canvas {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    top: 200px;
+    left: 0px;
+}
+
+#topSection {
+    height: 200px;
+}
+      
+div#sheetNames li:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+div.markerResultJson {
+    display: none;
+    font-family: monospace;
+    white-space: pre;
+}
+
+#geocoding-errors li {
+    display: none;
+}
+
+#geocoding-requests li {
+    display: none;
+}

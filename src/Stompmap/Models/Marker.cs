@@ -34,13 +34,16 @@ namespace Stompmap.Models
 
         public string Address { get; set; }
 
-        public virtual RawJson GeocoderResult { get; set; }
+        public string GeocoderResult {
+            get;
+            set;
+            }
 
         public string Icon { get; set; }
 
         public int MapId { get; set; }
 
-        public bool hasBeenVisited { get; set; }
+        public bool HasBeenVisited { get; set; }
 
         public bool IsPartialResult { get; set; }
 
