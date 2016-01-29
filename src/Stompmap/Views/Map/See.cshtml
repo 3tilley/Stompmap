@@ -4,18 +4,27 @@
     ViewData["Title"] = "See";
 }
 
-<h2>@Html.DisplayFor(model => model.Name)</h2>
-
 <div id="map-canvas"></div>
 
 @section Scripts {
     <script>
-        var embeddedMapData = {
+        var mapOptions = {
             zoomLevel : @Model.ZoomLevel,
             mapCentreLat : @Model.CentreLatitude,
             mapCentreLng : @Model.CentreLongtitude
             };
         var stompsUrl = @Model.Id + "/Stomps"
+
+
+        //google.maps.event.addDomListener(window, 'load', function() {
+        //    drawMapFromRest(stompsUrl, mapOptions);
+        //});
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+            $("footer").hide();
+            drawMapFromRest(stompsUrl, mapOptions);
+        });
+
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

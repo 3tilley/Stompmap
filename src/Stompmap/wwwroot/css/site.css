@@ -43,8 +43,8 @@ html, body {
 #map-canvas {
     width: 100%;
     position: absolute;
-    bottom: 0;
-    top: 200px;
+    abottom: 0;
+    top: 0px;
     left: 0px;
 }
 

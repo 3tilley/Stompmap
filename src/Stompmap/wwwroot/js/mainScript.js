@@ -6,6 +6,8 @@ var mapCentreLng = -0.126236;
 var googleMapsColours =
     ["red", "blue", "orange", "green", "purple", "yellow", "pink"];
 
+var vistedColour = 'grey';
+
 var iconList =
     jQuery.map(googleMapsColours, function(x) {
         return "http://maps.google.com/mapfiles/ms/icons/" + x + "-dot.png";
@@ -253,55 +255,10 @@ function makeCategoryIconMap(uniqueCategories, iconList) {
     return iconMap;
 }
     
-    
-google.maps.event.addDomListener(window, 'load', function() {
-    
-    //$("#geocoding-errors").on("click", function(e) {
-    //    $("#geocoding-errors li").toggle();
-    //});
-    
-    //$("#geocoding-requests").on("click", function(e) {
-    //    $("#geocoding-requests li").toggle();
-    //});
-    
-    //document.getElementById("fileInput")
-    //    .addEventListener("change", function(e) {
-    //        handleFile(e, function(wb) {
-    //            $("#sheetNames").show();
-    //            handleExcelData(wb, function(name) {
-    //                $("#sheetNames").hide();
-    //                var data = readSheet(wb.Sheets[name]);
-    //                drawMap([], mapOptions, mapDiv);
-                    
-    //                var iconMap = makeCategoryIconMap(getUniqueCategories(data), iconList);
-                    
-    //                jQuery.each(data, function(i, v) {
-    //                    var itemId = "request-" + i;
-    //                    latLngCached(latLngCache, geocoder, v.address, function(result) {
-    //                        removeItemFromList("#geocoding-requests", itemId);
-    //                        headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
-    //                        var marker = makeMarker(v.name, v.description,
-    //                            result[0].geometry.location, v.category,
-    //                            v.address, result,
-    //                            iconMap[v.category.toLowerCase()]);
-    //                        addMarkerToMap(map, marker);
-    //                        }, function(a, s) {
-    //                                removeItemFromList("#geocoding-requests", itemId);
-    //                                headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
-    //                                listErrorCallback(v.name, a, s)}, [],
-    //                        function(address) {
-    //                            var options = { itemId : itemId }
-    //                            var address = address === "" ? "<no address>" : address; 
-    //                            var text = v.name + " - " + address; 
-    //                            addItemToExistingList("#geocoding-requests", text, options);
-    //                            headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", 1);
-    //                        }) ;
-    //                });
-    //            });
-    //        });
-    //    }, false);
-    
-    if (typeof(embeddedMapData) === "undefined") {
+
+function drawMapFromRest(markersUrl, embeddedMapData) {
+
+    if (typeof (embeddedMapData) === "undefined") {
         mapOptions = {
             zoom: zoomLevel,
             center: new google.maps.LatLng(mapCentreLat, mapCentreLng),
@@ -313,28 +270,104 @@ google.maps.event.addDomListener(window, 'load', function() {
             center: new google.maps.LatLng(embeddedMapData.mapCentreLat, embeddedMapData.mapCentreLng),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-    } 
-    
-    
-    geocoder = new google.maps.Geocoder();    
+    }
 
-    //var jsonFile = jQuery.get(stompsUrl, function (data) {
-    //    drawMap(data, mapOptions, mapDiv);
-    //}, "json");
+    geocoder = new google.maps.Geocoder();
+
 
     $.ajax({
         dataType: "json",
         accepts: {
             text: "application/json"
         },
-        url: stompsUrl,
+        url: markersUrl,
         success: function (data) {
             drawMap(data, mapOptions, mapDiv);
-            }
+        }
     });
-     
-     //latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
-     //    addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
-     //});
+}
     
-});
+//google.maps.event.addDomListener(window, 'load', function() {
+    
+//    //$("#geocoding-errors").on("click", function(e) {
+//    //    $("#geocoding-errors li").toggle();
+//    //});
+    
+//    //$("#geocoding-requests").on("click", function(e) {
+//    //    $("#geocoding-requests li").toggle();
+//    //});
+    
+//    //document.getElementById("fileInput")
+//    //    .addEventListener("change", function(e) {
+//    //        handleFile(e, function(wb) {
+//    //            $("#sheetNames").show();
+//    //            handleExcelData(wb, function(name) {
+//    //                $("#sheetNames").hide();
+//    //                var data = readSheet(wb.Sheets[name]);
+//    //                drawMap([], mapOptions, mapDiv);
+                    
+//    //                var iconMap = makeCategoryIconMap(getUniqueCategories(data), iconList);
+                    
+//    //                jQuery.each(data, function(i, v) {
+//    //                    var itemId = "request-" + i;
+//    //                    latLngCached(latLngCache, geocoder, v.address, function(result) {
+//    //                        removeItemFromList("#geocoding-requests", itemId);
+//    //                        headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
+//    //                        var marker = makeMarker(v.name, v.description,
+//    //                            result[0].geometry.location, v.category,
+//    //                            v.address, result,
+//    //                            iconMap[v.category.toLowerCase()]);
+//    //                        addMarkerToMap(map, marker);
+//    //                        }, function(a, s) {
+//    //                                removeItemFromList("#geocoding-requests", itemId);
+//    //                                headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", -1);
+//    //                                listErrorCallback(v.name, a, s)}, [],
+//    //                        function(address) {
+//    //                            var options = { itemId : itemId }
+//    //                            var address = address === "" ? "<no address>" : address; 
+//    //                            var text = v.name + " - " + address; 
+//    //                            addItemToExistingList("#geocoding-requests", text, options);
+//    //                            headerUpdateFunc("#requestsHeader", "requestcount", "Requests - ", 1);
+//    //                        }) ;
+//    //                });
+//    //            });
+//    //        });
+//    //    }, false);
+    
+//    if (typeof(embeddedMapData) === "undefined") {
+//        mapOptions = {
+//            zoom: zoomLevel,
+//            center: new google.maps.LatLng(mapCentreLat, mapCentreLng),
+//            mapTypeId: google.maps.MapTypeId.ROADMAP
+//        };
+//    } else {
+//        mapOptions = {
+//            zoom: embeddedMapData.zoomLevel,
+//            center: new google.maps.LatLng(embeddedMapData.mapCentreLat, embeddedMapData.mapCentreLng),
+//            mapTypeId: google.maps.MapTypeId.ROADMAP
+//        };
+//    } 
+    
+    
+//    geocoder = new google.maps.Geocoder();    
+
+//    //var jsonFile = jQuery.get(stompsUrl, function (data) {
+//    //    drawMap(data, mapOptions, mapDiv);
+//    //}, "json");
+
+//    $.ajax({
+//        dataType: "json",
+//        accepts: {
+//            text: "application/json"
+//        },
+//        url: stompsUrl,
+//        success: function (data) {
+//            drawMap(data, mapOptions, mapDiv);
+//            }
+//    });
+     
+//     //latLngCached(latLngCache, geocoder, "E1 4GJ", function(result) {
+//     //    addMarkerToMap(map, makeMarker("home", "Home", result[0].geometry.location));
+//     //});
+    
+//});
